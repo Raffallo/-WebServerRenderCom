@@ -1,3 +1,4 @@
+#define CROW_MAIN
 #include "crow.h"
 
 int main() {
@@ -10,6 +11,5 @@ int main() {
 
     // Start the server
     app.port(8080).multithreaded().run();
-
     return 0;
 }
