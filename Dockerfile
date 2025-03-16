@@ -4,9 +4,12 @@ FROM gcc:latest
 RUN apt-get update && apt-get upgrade -y && apt-get install -f -y
 
 # Reconfigure dpkg in case of issues
-RUN dpkg --configure -a
+RUN dpkg --configure -a || true
 
-# Install necessary tools and dependencies
+# Clean up any locks or broken packages
+RUN rm -rf /var/lib/apt/lists/* /var/cache/apt/* /var/lib/dpkg/lock* /var/lib/dpkg/lock-frontend
+
+# Retry updating and installing dependencies
 RUN apt-get update && apt-get install -y cmake libboost-all-dev git
 
 # Clean up to reduce image size
