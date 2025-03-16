@@ -5,11 +5,18 @@ project(CrowApp)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Add Crow's include directory to the project
-include_directories(/crow/include)
+# Add Crow's include directory and Boost's include directory
+include_directories(/crow/include /usr/include)
 
 # Add the executable
 add_executable(app main.cpp)
+
+# Link Boost libraries
+find_package(Boost REQUIRED)
+if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS})
+    target_link_libraries(app ${Boost_LIBRARIES})
+endif()
 
 # Link pthread library
 target_link_libraries(app pthread)
