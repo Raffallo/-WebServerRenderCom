@@ -1,0 +1,7 @@
+services:
+  - name: cpp-app
+    type: web
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
