@@ -1,19 +1,16 @@
 FROM gcc:latest
 
-# Update and fix broken dependencies
-RUN apt-get update && apt-get upgrade -y && apt-get install -f -y
-
-# Reconfigure dpkg in case of issues
-RUN dpkg --configure -a || true
-
-# Clean up any locks or broken packages
+# Clean and remove lock files to prevent conflicts
 RUN rm -rf /var/lib/apt/lists/* /var/cache/apt/* /var/lib/dpkg/lock* /var/lib/dpkg/lock-frontend
 
-# Retry updating and installing dependencies
-RUN apt-get update && apt-get install -y cmake libboost-all-dev git
+# Configure dpkg to fix any broken state
+RUN dpkg --configure -a || true
 
-# Clean up to reduce image size
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+# Update packages and install dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends cmake libboost-all-dev git && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Clone the Crow repository
 RUN git clone https://github.com/CrowCpp/Crow.git /crow
@@ -25,8 +22,8 @@ WORKDIR /app
 # Build the app
 RUN make
 
-# Expose the port the app will use
+# Expose the port
 EXPOSE 8080
 
-# Command to run the app
+# Start the app
 CMD ["./app"]
