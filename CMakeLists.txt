@@ -5,8 +5,8 @@ project(CrowApp)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Add Crow's include directory and Boost's include directory
-include_directories(/crow/include /usr/include)
+# Include Crow and ASIO directories
+include_directories(/crow/include /asio/asio/include)
 
 # Add the executable
 add_executable(app main.cpp)
