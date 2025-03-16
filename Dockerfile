@@ -3,8 +3,11 @@ FROM gcc:latest
 # Update and fix broken dependencies
 RUN apt-get update && apt-get upgrade -y && apt-get install -f -y
 
+# Reconfigure dpkg in case of issues
+RUN dpkg --configure -a
+
 # Install necessary tools and dependencies
-RUN apt-get install -y cmake libboost-all-dev git
+RUN apt-get update && apt-get install -y cmake libboost-all-dev git
 
 # Clean up to reduce image size
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
