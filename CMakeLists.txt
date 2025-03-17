@@ -5,7 +5,7 @@ project(CrowApp)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Include Crow and ASIO directories
+# Include Crow, ASIO, and pqxx directories
 include_directories(/crow/include /asio/asio/include)
 
 # Add the executable
@@ -20,3 +20,10 @@ endif()
 
 # Link pthread library
 target_link_libraries(app pthread)
+
+# Link pqxx library
+find_package(PQXX REQUIRED)
+if(PQXX_FOUND)
+    include_directories(${PQXX_INCLUDE_DIRS})
+    target_link_libraries(app pqxx pq)
+endif()
