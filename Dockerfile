@@ -4,11 +4,11 @@ FROM gcc:latest
 RUN apt-get update && apt-get install -y \
     cmake \
     libboost-all-dev \
+    libpq-dev \
     git \
     wget \
     unzip \
-    libpq-dev \  # Dependency for libpqxx
-    --no-install-recommends
+    && apt-get clean
 
 # Install standalone ASIO
 RUN wget https://github.com/chriskohlhoff/asio/archive/refs/heads/master.zip -O asio.zip && \
