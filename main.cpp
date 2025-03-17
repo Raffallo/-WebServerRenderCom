@@ -12,7 +12,7 @@ int main()
        crow::SimpleApp app;
 	   
 	   
-   CROW_ROUTE(app, "/query").methods(crow::HTTPMethod::POST)([&](const crow::request& req) {
+CROW_ROUTE(app, "/query").methods(crow::HTTPMethod::POST)([&](const crow::request& req) {
         try {
             // Parse the input from the request body (if needed)
             auto query_input = crow::json::load(req.body);
@@ -31,22 +31,25 @@ int main()
             pqxx::result res = txn.exec(query);
             txn.commit();
 
-            // Create a JSON response
-            crow::json::wvalue json_res;
-            json_res["rows"] = crow::json::wvalue::list();  // Initialize as a JSON array
+            // Prepare the JSON response
+            std::vector<crow::json::wvalue> rows;
             for (const auto& row : res) {
                 crow::json::wvalue row_json;
                 for (const auto& field : row) {
                     row_json[field.name()] = field.c_str();
                 }
-                json_res["rows"].emplace_back(std::move(row_json));  // Correct way to append
+                rows.push_back(std::move(row_json));
             }
+
+            crow::json::wvalue json_res;
+            json_res["rows"] = std::move(rows); // Convert vector to JSON array
 
             return crow::response(json_res);
         } catch (const std::exception& e) {
             return crow::response(500, e.what());
         }
     });
+	
 
     // Define a simple route
     CROW_ROUTE(app, "/")([]() {
