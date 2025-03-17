@@ -8,7 +8,7 @@ int main()
 	
 
     // Replace with your Render database credentials
-    std::string conn_str = "host=postgresql://test_2rgw_user:YWybVsl153lFIN4Dy7vrO7pzeMu8z9aO@dpg-cvbh0gtds78s73akhha0-a/test_2rgw port=5432 dbname=test_2rgw user=test_2rgw_user password=YWybVsl153lFIN4Dy7vrO7pzeMu8z9aO";
+    std::string conn_str = "host=dpg-cvbh0gtds78s73akhha0-a port=5432 dbname=test_2rgw user=test_2rgw_user password=YWybVsl153lFIN4Dy7vrO7pzeMu8z9aO";
        crow::SimpleApp app;
 	   
 	   
