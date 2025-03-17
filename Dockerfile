@@ -1,9 +1,11 @@
 FROM gcc:latest
 
-# Install necessary tools and dependencies
+# Install necessary tools and dependencies, excluding gfortran
 RUN apt-get update && apt-get install -y \
     cmake \
-    libboost-all-dev \
+    libboost-dev \
+    libboost-system-dev \
+    libboost-thread-dev \
     libpq-dev \
     git \
     wget \
