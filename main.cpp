@@ -16,18 +16,38 @@ std::string ReadFile(const std::string& filePath)
     throw std::ios_base::failure("Error: Unable to open file " + filePath);
 }
 
+void HeartbeatsThread() try
+{
+	const std::string conn_str = ReadFile("/etc/secrets/database_conn_str");
+	pqxx::connection conn(conn_str);
+    while (true)
+	{
+		pqxx::work txn(conn);
+
+		txn.exec(
+			"UPDATE sessions "
+			"SET is_active = FALSE "
+			"WHERE last_heartbeat < NOW() - INTERVAL '3 minutes' AND is_active = TRUE"
+		);
+
+		txn.commit();
+		std::cout << "Heartbeat monitoring: Expired inactive sessions." << std::endl;
+
+        std::this_thread::sleep_for(std::chrono::minutes(1));
+    }
+}
+catch (const std::exception& e)
+{
+	std::cerr << "Error in heartbeat monitoring: " << e.what() << std::endl;
+}
 
 int main()
 {
-	
-	
-
-    // Replace with your Render database credentials
-		std::string conn_str = ReadFile("/etc/secrets/database_conn_str");
-       crow::SimpleApp app;
+	const std::string conn_str = ReadFile("/etc/secrets/database_conn_str");
+    crow::SimpleApp app;
 	   
 	   
-CROW_ROUTE(app, "/query").methods(crow::HTTPMethod::POST)([&](const crow::request& req) {
+	CROW_ROUTE(app, "/query").methods(crow::HTTPMethod::POST)([&](const crow::request& req) {
         try {
             // Parse the input from the request body (if needed)
             auto query_input = crow::json::load(req.body);
@@ -70,6 +90,9 @@ CROW_ROUTE(app, "/query").methods(crow::HTTPMethod::POST)([&](const crow::reques
     CROW_ROUTE(app, "/")([]() {
         return "Hello, World! This is a C++ app hosted on Render.";
     });
+
+    std::thread heartbeatThread(HeartbeatsThread);
+    heartbeatThread.detach();
 
     // Start the server
     app.port(8080).multithreaded().run();
