@@ -2,13 +2,28 @@
 #include "crow.h"
 #include <pqxx/pqxx>
 
+#include <fstream>
+#include <string>
+
+std::string ReadFile(const std::string& filePath)
+{
+    std::ifstream file(filePath, std::ios::in | std::ios::binary); // Open in binary mode for any type of file
+    if (file)
+	{
+        return std::string((std::istreambuf_iterator<char>(file)),
+                           std::istreambuf_iterator<char>()); // Read whole content
+    }
+    throw std::ios_base::failure("Error: Unable to open file " + filePath);
+}
+
+
 int main()
 {
 	
 	
 
     // Replace with your Render database credentials
-    std::string conn_str = "host=dpg-cvbh0gtds78s73akhha0-a port=5432 dbname=test_2rgw user=test_2rgw_user password=YWybVsl153lFIN4Dy7vrO7pzeMu8z9aO";
+		std::string conn_str = ReadFile("/etc/secrets/database_conn_str");
        crow::SimpleApp app;
 	   
 	   
